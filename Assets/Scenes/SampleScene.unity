@@ -831,6 +831,10 @@ PrefabInstance:
       propertyPath: _motherBase
       value: 
       objectReference: {fileID: 1996020733}
+    - target: {fileID: 5147117543884778141, guid: 7c68c7a3b367a3742bec029d1f4c8937, type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8684155132427553836, guid: 7c68c7a3b367a3742bec029d1f4c8937, type: 3}
       propertyPath: m_Name
       value: Worker (2)
@@ -1083,6 +1087,10 @@ PrefabInstance:
       propertyPath: _motherBase
       value: 
       objectReference: {fileID: 1996020733}
+    - target: {fileID: 5147117543884778141, guid: 7c68c7a3b367a3742bec029d1f4c8937, type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8684155132427553836, guid: 7c68c7a3b367a3742bec029d1f4c8937, type: 3}
       propertyPath: m_Name
       value: Worker (1)
@@ -1464,6 +1472,10 @@ PrefabInstance:
       propertyPath: _motherBase
       value: 
       objectReference: {fileID: 1996020733}
+    - target: {fileID: 5147117543884778141, guid: 7c68c7a3b367a3742bec029d1f4c8937, type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8684155132427553836, guid: 7c68c7a3b367a3742bec029d1f4c8937, type: 3}
       propertyPath: m_Name
       value: Worker

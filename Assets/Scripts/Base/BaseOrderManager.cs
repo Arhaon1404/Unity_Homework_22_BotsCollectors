@@ -61,7 +61,6 @@ public class BaseOrderManager : MonoBehaviour
                             worker.SetResourceTarget(resource);
                             worker.ChangeStatus();
                             resource.SwitchStatus();
-                            Debug.Log(worker.IsFree);
                         }
                     }
                 }
