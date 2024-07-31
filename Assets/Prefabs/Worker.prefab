@@ -296,6 +296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _worker: {fileID: 2980571950379252422}
   _workerOrderExecutor: {fileID: 5387214324465673846}
+  _interactionDistance: 1
   _speed: 5
 --- !u!114 &5387214324465673846
 MonoBehaviour:

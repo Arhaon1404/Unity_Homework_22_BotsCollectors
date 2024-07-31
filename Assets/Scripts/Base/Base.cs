@@ -18,4 +18,9 @@ public class Base : Target
 
         CountResourcesIncreased.Invoke(_countCollectedResources);
     }
+
+    public List<Worker> ProvideListWorkers()
+    {
+        return _listWorkers;
+    }
 }

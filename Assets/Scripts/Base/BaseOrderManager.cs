@@ -1,10 +1,11 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BaseOrderManager : MonoBehaviour
 {
     [SerializeField] private Base _base;
-    [SerializeField] private BaseResourceScaner _baseResourceScaner;
+    [SerializeField] private BaseResourceDatabase _baseResourceDatabase;
     [SerializeField] private int _delay;
 
     private Coroutine _sendCoroutine;
@@ -13,12 +14,12 @@ public class BaseOrderManager : MonoBehaviour
 
     private void OnEnable()
     {
-        _baseResourceScaner.ResourceAppeared += InitiateCoroutine;
+        _baseResourceDatabase.ResourceAppeared += InitiateCoroutine;
     }
 
     private void OnDisable()
     {
-        _baseResourceScaner.ResourceAppeared -= InitiateCoroutine;
+        _baseResourceDatabase.ResourceAppeared -= InitiateCoroutine;
     }
 
     private void Start()
@@ -44,23 +45,26 @@ public class BaseOrderManager : MonoBehaviour
     {
         while (_isCoroutineDone == false)
         {
-            if (_baseResourceScaner.ListFreeResource.Count == 0)
+            List<Worker> currentListWorkers = _base.ProvideListWorkers();
+            List<Resource> currentListFreeResources = _baseResourceDatabase.ProvideListFreeResource();
+
+            yield return _sendDelay;
+
+            if (_baseResourceDatabase.ListCount == 0)
             {
                 _isCoroutineDone = true;
             }
             else
             {
-                yield return _sendDelay;
-
-                foreach (Worker worker in _base.ListWorkers)
+                foreach (Worker worker in currentListWorkers)
                 {
-                    foreach (Resource resource in _baseResourceScaner.ListFreeResource)
+                    foreach (Resource resource in currentListFreeResources)
                     {
                         if (worker.IsFree == true && resource.InProcessCollection == false)
                         {
                             worker.SetResourceTarget(resource);
-                            worker.ChangeStatus();
-                            resource.SwitchStatus();
+                            worker.SetStatus();
+                            resource.SetStatus();
                         }
                     }
                 }

@@ -5,13 +5,14 @@ public class WorkerMover : MonoBehaviour
 {
     [SerializeField] private Worker _worker;
     [SerializeField] private WorkerOrderExecutor _workerOrderExecutor;
+    [SerializeField] private float _interactionDistance;
     [SerializeField] private float _speed;
     
     private bool _isMovingEnable;
 
     private Vector3 _height—alculatedTargetPosition;
 
-    public event Action TargetAchieved;
+    public event Action TargetReached;
 
     private void OnEnable()
     {
@@ -39,10 +40,10 @@ public class WorkerMover : MonoBehaviour
 
             float targetDistance = Vector3.Distance(_height—alculatedTargetPosition, transform.position);
 
-            if (targetDistance < 1f)
+            if (targetDistance < _interactionDistance)
             {
                 _isMovingEnable = false;
-                TargetAchieved.Invoke();
+                TargetReached.Invoke();
             }
         }
     }

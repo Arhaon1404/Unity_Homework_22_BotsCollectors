@@ -14,13 +14,13 @@ public class WorkerOrderExecutor : MonoBehaviour
 
     private void OnEnable()
     {
-        _workerMover.TargetAchieved += PerformTask;
+        _workerMover.TargetReached += PerformTask;
         _workerPickUpper.OrderComplited += ReturnToBase;
     }
 
     private void OnDisable()
     {
-        _workerMover.TargetAchieved -= PerformTask;
+        _workerMover.TargetReached -= PerformTask;
         _workerPickUpper.OrderComplited -= ReturnToBase;
     }
 
@@ -35,7 +35,7 @@ public class WorkerOrderExecutor : MonoBehaviour
         {
             _worker.GiveResourceToBase();
 
-            _worker.ChangeStatus();
+            _worker.SetStatus();
         }
     }
 

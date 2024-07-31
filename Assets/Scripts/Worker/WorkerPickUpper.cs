@@ -49,14 +49,16 @@ public class WorkerPickUpper : MonoBehaviour
     {
         yield return _delayCoroutine;
 
-        _worker.Target.transform.SetParent(_workerHands.transform);
+        Target target = _worker.ProvideTarget();
 
-        if (_worker.Target.TryGetComponent(out Rigidbody rigidbody))
+        target.transform.SetParent(_workerHands.transform);
+
+        if (target.TryGetComponent(out Rigidbody rigidbody))
         {
             rigidbody.constraints = RigidbodyConstraints.FreezePosition;
         }
 
-        _worker.Target.transform.position = _workerHands.transform.position;
+        target.transform.position = _workerHands.transform.position;
 
         OrderComplited.Invoke();
 
