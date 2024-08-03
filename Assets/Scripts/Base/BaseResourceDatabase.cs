@@ -5,6 +5,7 @@ using UnityEngine;
 public class BaseResourceDatabase : MonoBehaviour
 {
     private List<Resource> _listFreeResource;
+    private List<Resource> _listProcessCollectionResource;
 
     public event Action ResourceAppeared;
 
@@ -13,28 +14,35 @@ public class BaseResourceDatabase : MonoBehaviour
     private void Start()
     {
         _listFreeResource = new List<Resource>();
+        _listProcessCollectionResource = new List<Resource>();
+    }
+
+    public void AddNewFreeResource(Resource resource)
+    {
+        _listFreeResource.Add(resource);
+
+        ResourceAppeared.Invoke();
+    }
+
+    public void AddNewProcessCollectionResource(Resource resource)
+    {
+        _listProcessCollectionResource.Add(resource);
+
+        _listFreeResource.Remove(resource);
+
+        resource.ResourceCollected += RemoveCollectedResource;
+    }
+
+    public Resource ProvideFreeResource()
+    {
+        int firstItem = 0;
+
+        return _listFreeResource[firstItem];
     }
 
     private void RemoveCollectedResource(Resource resource)
     {
         resource.ResourceCollected -= RemoveCollectedResource;
-        _listFreeResource.Remove(resource);
-    }
-
-    public void AddNewResource(Resource resource)
-    {
-        if (_listFreeResource.Count == 0)
-        {
-            ResourceAppeared.Invoke();
-        }
-
-        resource.ResourceCollected += RemoveCollectedResource;   
-
-        _listFreeResource.Add(resource);
-    }
-
-    public List<Resource> ProvideListFreeResource()
-    {
-        return _listFreeResource;
+        _listProcessCollectionResource.Remove(resource);
     }
 }

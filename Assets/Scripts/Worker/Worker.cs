@@ -12,6 +12,7 @@ public class Worker : MonoBehaviour
     private bool _isFree;
 
     public event Action TargetReceived;
+    public event Action<Worker> FreeWorkerAppeared;
 
     public bool IsFree => _isFree;
     public Vector3 StartPosition => _startPosition;
@@ -21,11 +22,6 @@ public class Worker : MonoBehaviour
     {
         _startPosition = transform.position;
         _isFree = true;
-    }
-
-    public Target ProvideTarget()
-    {
-        return _target;
     }
 
     public void SetResourceTarget(Resource resource)
@@ -44,13 +40,18 @@ public class Worker : MonoBehaviour
         _resourceInHands.Collect();
     }
 
-    public void ResetTarget()
+    public void SetTargetMotherBase()
     {
         _target = _motherBase;
     }
 
-    public void SetStatus()
+    public void ChangeIsFreeStatus()
     {
         _isFree = !_isFree;
+
+        if (_isFree == true)
+        {
+            FreeWorkerAppeared.Invoke(this);
+        }
     }
 }

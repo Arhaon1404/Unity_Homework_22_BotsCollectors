@@ -10,8 +10,6 @@ public class Base : Target
 
     public event Action<int> CountResourcesIncreased;
 
-    public List<Worker> ListWorkers => _listWorkers;
-
     public void IncreasecountCollectedResources()
     {
         _countCollectedResources++;
@@ -19,8 +17,19 @@ public class Base : Target
         CountResourcesIncreased.Invoke(_countCollectedResources);
     }
 
-    public List<Worker> ProvideListWorkers()
+    public Worker ProvideFreeWorker()
     {
-        return _listWorkers;
+        Worker freeWorker = null;
+
+        foreach (Worker worker in _listWorkers)
+        {
+            if (worker.IsFree == true)
+            {
+                freeWorker = worker;
+                break;
+            }
+        }
+
+        return freeWorker;
     }
 }

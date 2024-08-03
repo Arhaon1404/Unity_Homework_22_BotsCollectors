@@ -35,13 +35,13 @@ public class WorkerOrderExecutor : MonoBehaviour
         {
             _worker.GiveResourceToBase();
 
-            _worker.SetStatus();
+            _worker.ChangeIsFreeStatus();
         }
     }
 
     private void ReturnToBase()
     {
-        _worker.ResetTarget();
+        _worker.SetTargetMotherBase();
 
         SelectionComplited.Invoke();
     }

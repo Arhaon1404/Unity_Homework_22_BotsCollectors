@@ -6,69 +6,37 @@ public class BaseOrderManager : MonoBehaviour
 {
     [SerializeField] private Base _base;
     [SerializeField] private BaseResourceDatabase _baseResourceDatabase;
-    [SerializeField] private int _delay;
-
-    private Coroutine _sendCoroutine;
-    private WaitForSeconds _sendDelay;
-    private bool _isCoroutineDone = true;
 
     private void OnEnable()
     {
-        _baseResourceDatabase.ResourceAppeared += InitiateCoroutine;
+        _baseResourceDatabase.ResourceAppeared += SendWorker;
     }
 
     private void OnDisable()
     {
-        _baseResourceDatabase.ResourceAppeared -= InitiateCoroutine;
+        _baseResourceDatabase.ResourceAppeared -= SendWorker;
     }
 
-    private void Start()
+    private void SendWorker()
     {
-        _sendDelay = new WaitForSeconds(_delay);
-    }
+        Worker currentWorker = _base.ProvideFreeWorker();
 
-    private void InitiateCoroutine()
-    {
-        if (_sendCoroutine != null && _isCoroutineDone == true)
+        if (currentWorker != null)
         {
-            StopCoroutine(_sendCoroutine);
-        }
+            currentWorker.FreeWorkerAppeared += SendFreeWorker;
 
-        if (_isCoroutineDone == true)
-        {
-            _isCoroutineDone = false;
-            _sendCoroutine = StartCoroutine(SendWorkerCoroutine());
+            Resource currentFreeResource = _baseResourceDatabase.ProvideFreeResource();
+
+            currentWorker.SetResourceTarget(currentFreeResource);
+            currentWorker.ChangeIsFreeStatus();
+            _baseResourceDatabase.AddNewProcessCollectionResource(currentFreeResource);
         }
     }
 
-    private IEnumerator SendWorkerCoroutine()
+    private void SendFreeWorker(Worker freeWorker)
     {
-        while (_isCoroutineDone == false)
-        {
-            List<Worker> currentListWorkers = _base.ProvideListWorkers();
-            List<Resource> currentListFreeResources = _baseResourceDatabase.ProvideListFreeResource();
+        freeWorker.FreeWorkerAppeared -= SendFreeWorker;
 
-            yield return _sendDelay;
-
-            if (_baseResourceDatabase.ListCount == 0)
-            {
-                _isCoroutineDone = true;
-            }
-            else
-            {
-                foreach (Worker worker in currentListWorkers)
-                {
-                    foreach (Resource resource in currentListFreeResources)
-                    {
-                        if (worker.IsFree == true && resource.InProcessCollection == false)
-                        {
-                            worker.SetResourceTarget(resource);
-                            worker.SetStatus();
-                            resource.SetStatus();
-                        }
-                    }
-                }
-            }
-        }
+        SendWorker();
     }
 }

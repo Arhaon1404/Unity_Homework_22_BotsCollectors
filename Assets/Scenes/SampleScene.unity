@@ -1343,7 +1343,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _base: {fileID: 1996020733}
   _baseResourceDatabase: {fileID: 1996020735}
-  _delay: 1
 --- !u!114 &1996020735
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -49,7 +49,7 @@ public class WorkerPickUpper : MonoBehaviour
     {
         yield return _delayCoroutine;
 
-        Target target = _worker.ProvideTarget();
+        Target target = _worker.Target;
 
         target.transform.SetParent(_workerHands.transform);
 

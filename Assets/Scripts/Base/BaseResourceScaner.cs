@@ -9,7 +9,7 @@ public class BaseResourceScaner : MonoBehaviour
     {
         if (collider.gameObject.TryGetComponent(out Resource resource))
         {
-            _baseResourceDatabase.AddNewResource(resource);
+            _baseResourceDatabase.AddNewFreeResource(resource);
         }
     }
 }
