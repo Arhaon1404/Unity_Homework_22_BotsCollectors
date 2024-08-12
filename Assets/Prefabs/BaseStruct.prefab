@@ -131,7 +131,7 @@ MonoBehaviour:
   _baseWorkerManager: {fileID: 6395123514862282071}
   _baseFlagCreator: {fileID: 6738034898506756939}
   _listWorkers: []
-  _maxWorkers: 5
+  _maxWorkers: 4
 --- !u!114 &6395123514862282071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,6 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d108761f086b6ce42aedd98ba1d3ae5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _listFreeResource: []
 --- !u!114 &6738034898506756939
 MonoBehaviour:
   m_ObjectHideFlags: 0

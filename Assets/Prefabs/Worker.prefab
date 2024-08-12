@@ -283,8 +283,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _motherBase: {fileID: 0}
-  _target: {fileID: 0}
-  _isFree: 0
 --- !u!114 &3755679161560904660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -332,7 +330,7 @@ MonoBehaviour:
   _worker: {fileID: 2980571950379252422}
   _workerOrderExecutior: {fileID: 5387214324465673846}
   _workerHands: {fileID: 808074409071862429}
-  _delayResourceSelection: 5
+  _delayResourceSelection: 2
 --- !u!114 &-3187624418152324275
 MonoBehaviour:
   m_ObjectHideFlags: 0
