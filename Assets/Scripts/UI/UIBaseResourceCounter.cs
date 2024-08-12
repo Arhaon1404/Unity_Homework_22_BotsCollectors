@@ -9,12 +9,12 @@ public class UIBaseResourceCounter : MonoBehaviour
 
     private void OnEnable()
     {
-        _base.CountResourcesIncreased += ChangeInfo;
+        _base.CountResourcesChanged += ChangeInfo;
     }
 
     private void OnDisable()
     {
-        _base.CountResourcesIncreased -= ChangeInfo;
+        _base.CountResourcesChanged -= ChangeInfo;
     }
 
     private void ChangeInfo(int count)

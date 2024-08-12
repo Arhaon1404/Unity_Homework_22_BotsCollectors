@@ -11,9 +11,13 @@ public class ResourceSpawner : MonoBehaviour
     private WaitForSeconds _spawnDelay;
     private bool _isCoroutineDone = true;
 
+    [SerializeField] private int _spawnCount;
+
     private void Start()
     {
         _spawnDelay = new WaitForSeconds(_delay);
+
+        _spawnCount = 0;
 
         InitiateCoroutine();
     }
@@ -38,6 +42,8 @@ public class ResourceSpawner : MonoBehaviour
             yield return _spawnDelay;
 
             Spawn();
+
+            _spawnCount++;
         }
 
         _isCoroutineDone = true;

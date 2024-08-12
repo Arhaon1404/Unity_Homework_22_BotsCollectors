@@ -43,6 +43,7 @@ public class WorkerMover : MonoBehaviour
             if (targetDistance < _interactionDistance)
             {
                 _isMovingEnable = false;
+
                 TargetReached.Invoke();
             }
         }

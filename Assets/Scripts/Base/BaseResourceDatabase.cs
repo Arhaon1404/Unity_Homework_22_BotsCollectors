@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BaseResourceDatabase : MonoBehaviour
 {
-    private List<Resource> _listFreeResource;
+    [SerializeField] private List<Resource> _listFreeResource;
     private List<Resource> _listProcessCollectionResource;
 
     public event Action ResourceAppeared;
@@ -36,8 +36,14 @@ public class BaseResourceDatabase : MonoBehaviour
     public Resource ProvideFreeResource()
     {
         int firstItem = 0;
+        Resource resource = null;
 
-        return _listFreeResource[firstItem];
+        if (_listFreeResource.Count >= 1)
+        {
+            resource = _listFreeResource[firstItem];
+        }
+
+        return resource;
     }
 
     private void RemoveCollectedResource(Resource resource)

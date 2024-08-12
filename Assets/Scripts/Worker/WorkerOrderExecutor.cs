@@ -8,9 +8,11 @@ public class WorkerOrderExecutor : MonoBehaviour
     [SerializeField] private Worker _worker;
     [SerializeField] private WorkerMover _workerMover;
     [SerializeField] private WorkerPickUpper _workerPickUpper;
+    [SerializeField] private WorkerNewBaseBuilder _workerNewBaseBuilder;
 
     public event Action SelectionStarted;
     public event Action SelectionComplited;
+    public event Action BuildingStarted;
 
     private void OnEnable()
     {
@@ -36,6 +38,10 @@ public class WorkerOrderExecutor : MonoBehaviour
             _worker.GiveResourceToBase();
 
             _worker.ChangeIsFreeStatus();
+        }
+        else if(_worker.Target.TryGetComponent(out BuildFlag buildFlag))
+        {
+            BuildingStarted.Invoke();
         }
     }
 

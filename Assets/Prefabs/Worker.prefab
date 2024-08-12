@@ -145,6 +145,7 @@ GameObject:
   - component: {fileID: 3755679161560904660}
   - component: {fileID: 5387214324465673846}
   - component: {fileID: 7539665509566834950}
+  - component: {fileID: -3187624418152324275}
   m_Layer: 0
   m_Name: Worker
   m_TagString: Untagged
@@ -282,6 +283,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _motherBase: {fileID: 0}
+  _target: {fileID: 0}
+  _isFree: 0
 --- !u!114 &3755679161560904660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -313,6 +316,7 @@ MonoBehaviour:
   _worker: {fileID: 2980571950379252422}
   _workerMover: {fileID: 3755679161560904660}
   _workerPickUpper: {fileID: 7539665509566834950}
+  _workerNewBaseBuilder: {fileID: -3187624418152324275}
 --- !u!114 &7539665509566834950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,3 +333,19 @@ MonoBehaviour:
   _workerOrderExecutior: {fileID: 5387214324465673846}
   _workerHands: {fileID: 808074409071862429}
   _delayResourceSelection: 5
+--- !u!114 &-3187624418152324275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8684155132427553836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4f6c96c5dcaa114782716e77500abff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _worker: {fileID: 2980571950379252422}
+  _prefab: {fileID: 8306101615295212536, guid: 5a0dcd83cba656d45a8a18af916a0085, type: 3}
+  _workerOrderExecutior: {fileID: 5387214324465673846}
+  _delayBaseBuild: 2

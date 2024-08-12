@@ -33,9 +33,16 @@ public class Worker : MonoBehaviour
         TargetReceived.Invoke();
     }
 
+    public void SetNewBaseTarget(BuildFlag buildFlag)
+    {
+        _target = buildFlag;
+
+        TargetReceived.Invoke();
+    }
+
     public void GiveResourceToBase()
     {
-        _motherBase.IncreasecountCollectedResources();
+        _motherBase.IncreaseCountCollectedResources();
 
         _resourceInHands.Collect();
     }
@@ -43,6 +50,11 @@ public class Worker : MonoBehaviour
     public void SetTargetMotherBase()
     {
         _target = _motherBase;
+    }
+
+    public void SetMotherBase(Base newBase)
+    {
+        _motherBase = newBase;
     }
 
     public void ChangeIsFreeStatus()
