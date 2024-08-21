@@ -5,23 +5,37 @@ using UnityEngine;
 public class Worker : MonoBehaviour
 {
     [SerializeField] private Base _motherBase;
-    private Vector3 _startPosition;
-    private Target _target;
+    [SerializeField] private WorkerOrderExecutor _workerOrderExecutor;
+    [SerializeField] private WorkerMover _workerMover;
+    [SerializeField] private WorkerNewBaseBuilder _workerNewBaseBuilder;
+
+    [SerializeField] private Target _target;
     private Resource _resourceInHands;
 
-    private bool _isFree;
+    [SerializeField] private bool _isFree;
 
-    public event Action TargetReceived;
     public event Action<Worker> FreeWorkerAppeared;
 
     public bool IsFree => _isFree;
-    public Vector3 StartPosition => _startPosition;
     public Target Target => _target;
 
-    private void Start()
+    private void Awake()
     {
-        _startPosition = transform.position;
         _isFree = true;
+    }
+
+    private void OnEnable()
+    {
+        _workerOrderExecutor.OrderComplited += SetTargetMotherBase;
+        _workerOrderExecutor.WorkerReturned += GiveResourceToBase;
+        _workerNewBaseBuilder.BuildingFinished += BecameUnitFree;
+    }
+
+    private void OnDisable()
+    {
+        _workerOrderExecutor.OrderComplited -= SetTargetMotherBase;
+        _workerOrderExecutor.WorkerReturned -= GiveResourceToBase;
+        _workerNewBaseBuilder.BuildingFinished -= BecameUnitFree;
     }
 
     public void SetResourceTarget(Resource resource)
@@ -30,26 +44,14 @@ public class Worker : MonoBehaviour
 
         _resourceInHands = resource;
 
-        TargetReceived.Invoke();
+        _workerMover.CarryOrder(_target);
     }
 
     public void SetNewBaseTarget(BuildFlag buildFlag)
     {
         _target = buildFlag;
 
-        TargetReceived.Invoke();
-    }
-
-    public void GiveResourceToBase()
-    {
-        _motherBase.IncreaseCountCollectedResources();
-
-        _resourceInHands.Collect();
-    }
-
-    public void SetTargetMotherBase()
-    {
-        _target = _motherBase;
+        _workerMover.CarryOrder(_target);
     }
 
     public void SetMotherBase(Base newBase)
@@ -57,13 +59,33 @@ public class Worker : MonoBehaviour
         _motherBase = newBase;
     }
 
-    public void ChangeIsFreeStatus()
+    public void BecameUnitBusy()
     {
-        _isFree = !_isFree;
+        _isFree = false;
+    }
 
-        if (_isFree == true)
-        {
-            FreeWorkerAppeared.Invoke(this);
-        }
+    public void BecameUnitFree()
+    {
+        _isFree = true;
+    }
+
+    private void GiveResourceToBase()
+    {
+        _motherBase.IncreaseCountCollectedResources();
+
+        _resourceInHands.Collect();
+
+        _resourceInHands.transform.SetParent(null);
+
+        BecameUnitFree();
+
+        FreeWorkerAppeared.Invoke(this);
+    }
+
+    private void SetTargetMotherBase()
+    {
+        _target = _motherBase;
+
+        _workerMover.CarryOrder(_target);
     }
 }

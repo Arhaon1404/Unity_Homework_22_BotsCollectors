@@ -11,28 +11,27 @@ public class BaseWorkerManager : MonoBehaviour
     private bool _isNewBaseBuilding;
     private bool _isWorkerSend;
 
-    private WaitForSeconds _coroutineDelay;
-
     public event Action<Worker> BuilderDispatched;
+    public event Action<Worker> RequestBuildFlagSent;
+    public event Action RequestFreeWorkerSent;
 
     public bool IsNewBaseBuilding => _isNewBaseBuilding;
 
     private void OnEnable()
     {
-        _base.NewWorkerAppeared += SelectAction;
-        _baseResourceDatabase.ResourceAppeared += SelectAction;
+        _base.NewWorkerAppeared += SendRequest;
+        _baseResourceDatabase.ResourceAppeared += SendRequest;
     }
 
     private void OnDisable()
     {
-        _base.NewWorkerAppeared -= SelectAction;
-        _baseResourceDatabase.ResourceAppeared -= SelectAction;
+        _base.NewWorkerAppeared -= SendRequest;
+        _baseResourceDatabase.ResourceAppeared -= SendRequest;
     }
 
     private void Start()
     {
         _isNewBaseBuilding = false;
-        _coroutineDelay = new WaitForSeconds(_waitingDelay);
     }
 
     public void ChangeNewBaseBuildingStatus(bool currentBool)
@@ -42,79 +41,67 @@ public class BaseWorkerManager : MonoBehaviour
         if (_isNewBaseBuilding == false)
         {
             _isWorkerSend = false;
+
+            SendRequest();
         }
     }
 
-    private void SelectAction()
+    public void SelectAction(Worker worker)
     {
-        if (_isNewBaseBuilding == false)
+        if (worker != null)
         {
-            SendWorkerForResource();
-        }
-        else
-        {
-            SendWorkerForBuildNewBase();
+            if (_isNewBaseBuilding == false)
+            {
+                SendWorkerForResource(worker);
+            }
+            else
+            {
+                RequestBuildFlagSent.Invoke(worker);
+            }
         }
     }
 
-    private void SendWorkerForResource()
+    public void SendWorkerForBuildNewBase(Worker currentWorker, BuildFlag target)
     {
-        Worker currentWorker = _base.ProvideFreeWorker();
+        if (_isWorkerSend == false)
+        {
+            currentWorker.SetNewBaseTarget(target);
+
+            currentWorker.BecameUnitBusy();
+
+            BuilderDispatched.Invoke(currentWorker);
+
+            _isWorkerSend = true;
+        }
+    }
+
+    private void SendRequest()
+    {
+        RequestFreeWorkerSent.Invoke();
+    }
+
+    private void SendWorkerForResource(Worker currentWorker)
+    {
         Resource currentFreeResource = _baseResourceDatabase.ProvideFreeResource();
 
-        if (currentWorker != null && currentFreeResource != null)
+        if (currentFreeResource != null)
         {
             currentWorker.FreeWorkerAppeared += SendFreeWorker;
 
             _baseResourceDatabase.AddNewProcessCollectionResource(currentFreeResource);
 
             currentWorker.SetResourceTarget(currentFreeResource);
-            currentWorker.ChangeIsFreeStatus();
 
-            if (_base.ProvideFreeWorker() == true)
-            {
-                SendWorkerForResource();
-            }
+            currentWorker.BecameUnitBusy();
+
+            SendRequest();
         }
-    }
-
-    private void SendWorkerForBuildNewBase()
-    {
-        if (_isWorkerSend == false)
-        {
-            StartCoroutine(WaitFreeWorkerCoroutine());
-
-            StopCoroutine(WaitFreeWorkerCoroutine());
-
-            _isWorkerSend = true;
-        }
-        
-    }
-
-    private IEnumerator WaitFreeWorkerCoroutine()
-    {
-        Worker currentWorker = _base.ProvideFreeWorker();
-
-        while (currentWorker == null)
-        {
-            yield return _coroutineDelay;
-
-            currentWorker = _base.ProvideFreeWorker();
-        }
-
-        currentWorker.FreeWorkerAppeared += SendFreeWorker;
-
-        currentWorker.SetNewBaseTarget(_base.NewBaseFlag);
-
-        currentWorker.ChangeIsFreeStatus();
-
-        BuilderDispatched.Invoke(currentWorker);
     }
 
     private void SendFreeWorker(Worker freeWorker)
     {
         freeWorker.FreeWorkerAppeared -= SendFreeWorker;
 
-        SelectAction();
+        SelectAction(freeWorker);
     }
 }

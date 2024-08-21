@@ -19,9 +19,12 @@ public class BaseResourceDatabase : MonoBehaviour
 
     public void AddNewFreeResource(Resource resource)
     {
-        _listFreeResource.Add(resource);
+        if (_listFreeResource.Contains(resource) == false && _listProcessCollectionResource.Contains(resource) == false)
+        {
+            _listFreeResource.Add(resource);
 
-        ResourceAppeared.Invoke();
+            ResourceAppeared.Invoke();
+        }
     }
 
     public void AddNewProcessCollectionResource(Resource resource)

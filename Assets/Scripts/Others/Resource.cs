@@ -1,27 +1,33 @@
 using System;
+using UnityEngine;
+
+[RequireComponent(typeof(Rigidbody))]
 
 public class Resource : Target
 {
-    private bool _colladerIsTouch;
+    private Rigidbody _rigidbody;
 
     public event Action<Resource> ResourceCollected;
 
-    public bool ColladerIsTouch => _colladerIsTouch;
-
     private void Start()
     {
-        _colladerIsTouch = false;
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
     public void Collect()
     {
         ResourceCollected.Invoke(this);
 
-        Destroy(gameObject);
+        DefrostPosition();
     }
 
-    public void TouchCollader()
+    public void FreezePosition()
     {
-        _colladerIsTouch = true;
+        _rigidbody.constraints = RigidbodyConstraints.FreezePosition;
+    }
+
+    private void DefrostPosition()
+    {
+        _rigidbody.constraints = RigidbodyConstraints.None;
     }
 }

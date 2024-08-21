@@ -15,23 +15,13 @@ public class WorkerPickUpper : MonoBehaviour
 
     public event Action OrderComplited;
 
-    private void OnEnable()
-    {
-        _workerOrderExecutior.SelectionStarted += InitiateCoroutine;
-    }
-
-    private void OnDisable()
-    {
-        _workerOrderExecutior.SelectionStarted -= InitiateCoroutine;
-    }
-
     private void Start()
     {
         _delayCoroutine = new WaitForSeconds(_delayResourceSelection);
         _isCoroutineDone = true;
     }
 
-    private void InitiateCoroutine()
+    public void InitiateCoroutine()
     {
         if (_pickUpResourceCoroutine != null)
         {
@@ -53,9 +43,9 @@ public class WorkerPickUpper : MonoBehaviour
 
         target.transform.SetParent(_workerHands.transform);
 
-        if (target.TryGetComponent(out Rigidbody rigidbody))
+        if (target.TryGetComponent(out Resource resource))
         {
-            rigidbody.constraints = RigidbodyConstraints.FreezePosition;
+            resource.FreezePosition();
         }
 
         target.transform.position = _workerHands.transform.position;

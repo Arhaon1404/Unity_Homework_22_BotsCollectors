@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class BaseFlagCreator: MonoBehaviour
 {
-    [SerializeField] private Base _motherBase;
     [SerializeField] private ParticleSystem _baseHighlighEffect;
     [SerializeField] private BuildFlag _prefab;
 

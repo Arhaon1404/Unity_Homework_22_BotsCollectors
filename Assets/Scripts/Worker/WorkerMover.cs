@@ -1,71 +1,73 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class WorkerMover : MonoBehaviour
 {
-    [SerializeField] private Worker _worker;
-    [SerializeField] private WorkerOrderExecutor _workerOrderExecutor;
     [SerializeField] private float _interactionDistance;
     [SerializeField] private float _speed;
-    
-    private bool _isMovingEnable;
 
-    private Vector3 _heightÑalculatedTargetPosition;
+    private Coroutine _moveCoroutine;
+    private bool _isCoroutineDone = true;
+
+    private Vector3 _heightCalculatedTargetPosition;
 
     public event Action TargetReached;
 
-    private void OnEnable()
+    public void CarryOrder(Target target)
     {
-        _worker.TargetReceived += ÑarryOrder;
-        _workerOrderExecutor.SelectionComplited += ÑarryOrder;
+        float axisX = target.transform.position.x;
+        float axisY = transform.position.y;
+        float axisZ = target.transform.position.z;
+
+        _heightCalculatedTargetPosition = new Vector3(axisX, axisY, axisZ);
+
+        Vector3 direction = _heightCalculatedTargetPosition - transform.position;
+
+        transform.rotation = Quaternion.LookRotation(direction);
+
+        InitiateCoroutine(target);
     }
 
-    private void OnDisable()
+    private void InitiateCoroutine(Target target)
     {
-        _worker.TargetReceived += ÑarryOrder;
-        _workerOrderExecutor.SelectionComplited -= ÑarryOrder;
-    }
-    private void Start()
-    {
-        _isMovingEnable = false;
-    }
-
-    private void Update()
-    {
-        if (_isMovingEnable)
+        if (_moveCoroutine != null)
         {
-            float step = _speed * Time.deltaTime;
+            StopCoroutine(_moveCoroutine);
+        }
 
-            transform.position = Vector3.MoveTowards(transform.position, _heightÑalculatedTargetPosition, step);
+        if (_isCoroutineDone == true)
+        {
+            _isCoroutineDone = false;
 
-            float targetDistance = Vector3.Distance(_heightÑalculatedTargetPosition, transform.position);
-
-            if (targetDistance < _interactionDistance)
-            {
-                _isMovingEnable = false;
-
-                TargetReached.Invoke();
-            }
+            _moveCoroutine = StartCoroutine(MoveCoroutine(target));
         }
     }
 
-    private void ÑarryOrder()
+    private IEnumerator MoveCoroutine(Target target)
     {
-        float axisX = _worker.Target.transform.position.x;
-        float axisY = transform.position.y;
-        float axisZ = _worker.Target.transform.position.z;
+        bool _isMovingEnable = true;
 
-        _heightÑalculatedTargetPosition = new Vector3(axisX, axisY, axisZ);
+        while (_isMovingEnable)
+        {
+            yield return null;
 
-        SetDirection();
+            float step = _speed * Time.deltaTime;
 
-        _isMovingEnable = true;
-    }
+            transform.position = Vector3.MoveTowards(transform.position, _heightCalculatedTargetPosition, step);
 
-    private void SetDirection()
-    {
-        Vector3 direction = _heightÑalculatedTargetPosition - transform.position;
+            Vector3 targetPosition = target.transform.position;
 
-        transform.rotation = Quaternion.LookRotation(direction);
+            float targetDistance = transform.position.SqrDistance(targetPosition);
+
+            if (targetDistance < _interactionDistance)
+            {
+                _isMovingEnable = false;                
+            }
+        }
+
+        _isCoroutineDone = true;
+
+        TargetReached.Invoke();
     }
 }

@@ -1,26 +1,55 @@
 using System.Collections;
 using UnityEngine;
 
-public class ResourceSpawner : MonoBehaviour
+public class ResourceSpawner : Spawner<Resource>
 {
-    [SerializeField] private Resource _prefab;
-    [SerializeField] private int _spawnAmount;
     [SerializeField] private int _delay;
+    [SerializeField] private int _spawnAmount;
 
     private Coroutine _spawnCoroutine;
     private WaitForSeconds _spawnDelay;
     private bool _isCoroutineDone = true;
 
-    [SerializeField] private int _spawnCount;
-
     private void Start()
     {
         _spawnDelay = new WaitForSeconds(_delay);
 
-        _spawnCount = 0;
-
         InitiateCoroutine();
     }
+
+    protected override Resource CreateObject()
+    {
+        Vector3 randomPosition = CreateRandomPosition();
+
+        Resource resource = Instantiate(Prefab, SpawnPosition + randomPosition, transform.rotation);
+
+        resource.ResourceCollected += OnReturnedToPool;
+
+        return resource;
+    }
+
+    protected override void OnTakeFromPool(Resource resource)
+    {
+        Vector3 randomPosition = CreateRandomPosition();
+
+        resource.transform.position = SpawnPosition + randomPosition;
+
+        resource.ResourceCollected += Release;
+
+        base.OnTakeFromPool(resource);
+    }
+
+    protected override void OnReturnedToPool(Resource resource)
+    {
+        base.OnReturnedToPool(resource);
+    }
+
+    private void Release(Resource resource)
+    {
+        Pool.Release(resource);
+        resource.ResourceCollected -= Release;
+    }
+
     private void InitiateCoroutine()
     {
         if (_spawnCoroutine != null)
@@ -41,15 +70,13 @@ public class ResourceSpawner : MonoBehaviour
         {
             yield return _spawnDelay;
 
-            Spawn();
-
-            _spawnCount++;
+            Pool.Get();
         }
 
         _isCoroutineDone = true;
     }
 
-    private void Spawn()
+    private Vector3 CreateRandomPosition()
     {
         float bisection = 2;
 
@@ -63,6 +90,6 @@ public class ResourceSpawner : MonoBehaviour
 
         Vector3 newPosition = new Vector3(axesX, axesY, axesZ);
 
-        Instantiate(_prefab, transform.position + newPosition,transform.rotation);
+        return newPosition;
     }
 }

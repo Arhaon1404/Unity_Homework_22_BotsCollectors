@@ -5,7 +5,7 @@ using UnityEngine;
 public class WorkerNewBaseBuilder : MonoBehaviour
 {
     [SerializeField] private Worker _worker;
-    [SerializeField] private Base _prefab;
+    [SerializeField] private BaseSpawner _baseSpawner;
     [SerializeField] private WorkerOrderExecutor _workerOrderExecutior;
     [SerializeField] private int _delayBaseBuild;
 
@@ -13,15 +13,7 @@ public class WorkerNewBaseBuilder : MonoBehaviour
     private WaitForSeconds _delayCoroutine;
     private bool _isCoroutineDone;
 
-    private void OnEnable()
-    {
-        _workerOrderExecutior.BuildingStarted += InitiateCoroutine;
-    }
-
-    private void OnDisable()
-    {
-        _workerOrderExecutior.BuildingStarted += InitiateCoroutine;
-    }
+    public event Action BuildingFinished;
 
     private void Start()
     {
@@ -29,7 +21,12 @@ public class WorkerNewBaseBuilder : MonoBehaviour
         _isCoroutineDone = true;
     }
 
-    private void InitiateCoroutine()
+    public void SetBaseSpawner(BaseSpawner baseSpawner)
+    {
+        _baseSpawner = baseSpawner;
+    }
+
+    public void InitiateCoroutine()
     {
         if (_buildNewBaseCoroutine != null)
         {
@@ -54,13 +51,11 @@ public class WorkerNewBaseBuilder : MonoBehaviour
             flag.RemoveFlag();
         }
 
-        Base newBase = Instantiate(_prefab, newBasePosition, _prefab.transform.rotation);
-
-        _worker.SetMotherBase(newBase);
+        Base newBase = _baseSpawner.CreateNewBase(newBasePosition);
 
         newBase.AddWorker(_worker);
 
-        _worker.ChangeIsFreeStatus();
+        BuildingFinished.Invoke();
 
         _isCoroutineDone = true;
     }

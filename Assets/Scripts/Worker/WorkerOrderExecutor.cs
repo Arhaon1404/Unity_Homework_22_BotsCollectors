@@ -1,18 +1,15 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class WorkerOrderExecutor : MonoBehaviour
 {
     [SerializeField] private Worker _worker;
     [SerializeField] private WorkerMover _workerMover;
-    [SerializeField] private WorkerPickUpper _workerPickUpper;
     [SerializeField] private WorkerNewBaseBuilder _workerNewBaseBuilder;
+    [SerializeField] private WorkerPickUpper _workerPickUpper;
 
-    public event Action SelectionStarted;
-    public event Action SelectionComplited;
-    public event Action BuildingStarted;
+    public event Action OrderComplited;
+    public event Action WorkerReturned;
 
     private void OnEnable()
     {
@@ -30,25 +27,21 @@ public class WorkerOrderExecutor : MonoBehaviour
     {
         if (_worker.Target.TryGetComponent(out Resource resource))
         {
-            SelectionStarted.Invoke();
+            _workerPickUpper.InitiateCoroutine();
         }
-
+        
         if (_worker.Target.TryGetComponent(out Base motherBase))
         {
-            _worker.GiveResourceToBase();
-
-            _worker.ChangeIsFreeStatus();
+            WorkerReturned.Invoke();
         }
         else if(_worker.Target.TryGetComponent(out BuildFlag buildFlag))
         {
-            BuildingStarted.Invoke();
+            _workerNewBaseBuilder.InitiateCoroutine();
         }
     }
 
     private void ReturnToBase()
     {
-        _worker.SetTargetMotherBase();
-
-        SelectionComplited.Invoke();
+        OrderComplited.Invoke();
     }
 }

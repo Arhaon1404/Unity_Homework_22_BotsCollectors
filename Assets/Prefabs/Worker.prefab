@@ -283,6 +283,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _motherBase: {fileID: 0}
+  _workerOrderExecutor: {fileID: 5387214324465673846}
+  _workerMover: {fileID: 3755679161560904660}
+  _workerNewBaseBuilder: {fileID: -3187624418152324275}
+  _target: {fileID: 0}
+  _isFree: 0
 --- !u!114 &3755679161560904660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -295,10 +300,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed9e394cc213814e85de54a65ad65f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _worker: {fileID: 2980571950379252422}
-  _workerOrderExecutor: {fileID: 5387214324465673846}
-  _interactionDistance: 1
-  _speed: 5
+  _interactionDistance: 2
+  _speed: 3
 --- !u!114 &5387214324465673846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -313,8 +316,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _worker: {fileID: 2980571950379252422}
   _workerMover: {fileID: 3755679161560904660}
-  _workerPickUpper: {fileID: 7539665509566834950}
   _workerNewBaseBuilder: {fileID: -3187624418152324275}
+  _workerPickUpper: {fileID: 7539665509566834950}
 --- !u!114 &7539665509566834950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -344,6 +347,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _worker: {fileID: 2980571950379252422}
-  _prefab: {fileID: 8306101615295212536, guid: 5a0dcd83cba656d45a8a18af916a0085, type: 3}
+  _baseSpawner: {fileID: 0}
   _workerOrderExecutior: {fileID: 5387214324465673846}
   _delayBaseBuild: 2

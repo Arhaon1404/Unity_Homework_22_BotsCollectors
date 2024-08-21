@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Base : Target
 {
-    [SerializeField] private BaseWorkerSpawner _baseWorkerSpawner;
+    [SerializeField] private WorkerSpawner _workerSpawner;
     [SerializeField] private BaseWorkerManager _baseWorkerManager;
     [SerializeField] private BaseFlagCreator _baseFlagCreator;
     [SerializeField] private List<Worker> _listWorkers;
@@ -19,23 +19,24 @@ public class Base : Target
     public event Action NewWorkerAppeared;
 
     public int CountCollectedResources => _countCollectedResources;
-    public bool IsSetFlag => _isSetFlag;
-
-    public BuildFlag NewBaseFlag => _baseFlagCreator.PlacedBuildFlag;
 
     private void OnEnable()
     {
-        _baseFlagCreator.BuildingFlagCreated += ChangeFlagState;
-        _baseFlagCreator.BuildingFlagRemoved += ChangeFlagState;
-        _baseWorkerSpawner.NewWorkerSpawned += AddNewWorker;
+        _baseFlagCreator.BuildingFlagCreated += BecameFlagTrue;
+        _baseFlagCreator.BuildingFlagRemoved += BecameFlagFalse;
+        _workerSpawner.NewWorkerSpawned += AddNewWorker;
+        _baseWorkerManager.RequestFreeWorkerSent += ProvideFreeWorker;
+        _baseWorkerManager.RequestBuildFlagSent += ProvideNewBaseFlag;
         _baseWorkerManager.BuilderDispatched += DeleteWorker;
     }
 
     private void OnDisable()
     {
-        _baseFlagCreator.BuildingFlagCreated -= ChangeFlagState;
-        _baseFlagCreator.BuildingFlagRemoved -= ChangeFlagState;
-        _baseWorkerSpawner.NewWorkerSpawned -= AddNewWorker;
+        _baseFlagCreator.BuildingFlagCreated -= BecameFlagTrue;
+        _baseFlagCreator.BuildingFlagRemoved -= BecameFlagFalse;
+        _workerSpawner.NewWorkerSpawned -= AddNewWorker;
+        _baseWorkerManager.RequestFreeWorkerSent -= ProvideFreeWorker;
+        _baseWorkerManager.RequestBuildFlagSent -= ProvideNewBaseFlag;
         _baseWorkerManager.BuilderDispatched -= DeleteWorker;
     }
 
@@ -54,7 +55,21 @@ public class Base : Target
         SelectAction();
     }
 
-    public Worker ProvideFreeWorker()
+    public void AddWorker(Worker worker)
+    {
+        worker.SetMotherBase(this);
+
+        _listWorkers.Add(worker);
+    }
+
+    private void ProvideNewBaseFlag(Worker worker)
+    {
+        BuildFlag flag = _baseFlagCreator.PlacedBuildFlag;
+
+        _baseWorkerManager.SendWorkerForBuildNewBase(worker, flag);
+    }
+
+    private void ProvideFreeWorker()
     {
         Worker freeWorker = null;
 
@@ -63,48 +78,45 @@ public class Base : Target
             if (worker.IsFree == true)
             {
                 freeWorker = worker;
+
                 break;
             }
         }
 
-        return freeWorker;
+        _baseWorkerManager.SelectAction(freeWorker);
     }
 
-    public void AddWorker(Worker worker)
+    private void BecameFlagTrue()
     {
-        _listWorkers.Add(worker);
+        _isSetFlag = true;
     }
 
-    private void ChangeFlagState()
+    private void BecameFlagFalse()
     {
-        _isSetFlag = !_isSetFlag;
+        _isSetFlag = false;
 
-        if (_isSetFlag == false)
-        {
-            bool isBuildingEnd = false;
-
-            _baseWorkerManager.ChangeNewBaseBuildingStatus(isBuildingEnd);
-        }
+        _baseWorkerManager.ChangeNewBaseBuildingStatus(_isSetFlag);
     }
 
     private void TryBuyNewWorker()
     {
         int random = UnityEngine.Random.Range(0, 100);
-        int chanceBuyNewWorker = 50;
+        int chanceBuyNewWorker = 0;
 
         if (random > chanceBuyNewWorker)
         {
-            _baseWorkerSpawner.CreateNewWorker(this);
+            _workerSpawner.CreateNewWorker(this);
         }
     }
 
     private void AddNewWorker(Worker newWorker, int spawnPrice)
     {
-        AddWorker(newWorker);
-
         _countCollectedResources -= spawnPrice;
 
         CountResourcesChanged.Invoke(_countCollectedResources);
+
+        AddWorker(newWorker);
+
         NewWorkerAppeared.Invoke();
     }
 

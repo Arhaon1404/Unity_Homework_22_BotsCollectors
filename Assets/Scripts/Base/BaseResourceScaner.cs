@@ -9,11 +9,7 @@ public class BaseResourceScaner : MonoBehaviour
     {
         if (collider.gameObject.TryGetComponent(out Resource resource))
         {
-            if (resource.ColladerIsTouch == false)
-            {
-                resource.TouchCollader();
-                _baseResourceDatabase.AddNewFreeResource(resource);
-            }
+            _baseResourceDatabase.AddNewFreeResource(resource);
         }
     }
 }
